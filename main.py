@@ -1,10 +1,16 @@
 import uvicorn
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-from schemas import CardBase, Card, CardCreate, CardScore, CardRepeat
 from datetime import date, timedelta as td
 from os import path
 import json
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
+
+from schemas import CardBase, Card, CardCreate, CardScore, CardRepeat
+
+
 
 
 app = FastAPI(
@@ -12,6 +18,23 @@ app = FastAPI(
     description="Application to help memorize", 
     version="1.0.0"
 )
+
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+origins = [
+    "http://localhost",
+    "http://127.0.0.1",
+    "http://localhost:8000", 
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"], 
+    allow_credentials=True,
+    allow_methods=["*"], 
+    allow_headers=["*"], 
+)
+
 
 def read_file(id):
     with open(f'{id}.json', 'r', encoding='utf-8') as f_cards:
@@ -34,6 +57,10 @@ def size_ratio(mark, interval, ratio):
 
     interval = max(1, int(interval * ratio))
     return interval, ratio
+
+@app.get('/')
+async def read_index():
+    return FileResponse("static/index.html")
     
 @app.patch('/{id}/cards/{card_id}')
 async def change_period(score: CardScore, card_id: int, id: int):
@@ -64,6 +91,19 @@ async def repeat_cards(id: int):
             return []
     else:
         return []
+    
+
+@app.get('/{id}/all_cards', response_model=list[CardRepeat])
+async def repeat_cards(id: int):
+    file = f'{id}.json'
+    if path.isfile(file):
+        try:
+            cards = read_file(id)
+            return cards
+        except json.JSONDecodeError:
+            return []
+    else:
+        return []
 
 @app.post('/{id}/cards')
 async def create_card(card: CardBase, id: int):
@@ -77,7 +117,7 @@ async def create_card(card: CardBase, id: int):
     question, answer = card.question, card.answer
     next_date = (date.today() + td(days=1)).strftime("%Y-%m-%d")
     if len(cards):
-        card_id = max(cards, key=lambda x: x['index'])['index'] + 1
+        card_id = max(cards, key=lambda x: x['index_card'])['index_card'] + 1
     else:
         card_id = 1
     card = {
@@ -91,7 +131,7 @@ async def create_card(card: CardBase, id: int):
     
     cards.append(card)
     write_file(cards, id)
-    return {"card": "created", "id": id}
+    return {"status": "success", "card": card}
     
 
 
