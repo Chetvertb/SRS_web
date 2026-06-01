@@ -14,7 +14,7 @@ from schemas import CardBase, Card, CardCreate, CardScore, CardRepeat
 
 
 app = FastAPI(
-    title="Card repeat API",
+    title="Cards repeat API",
     description="Application to help memorize", 
     version="1.0.0"
 )
@@ -23,7 +23,7 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 
 origins = [
     "http://localhost",
-    "http://127.0.0.1",
+    "http://0.0.0.0",
     "http://localhost:8000", 
 ]
 
