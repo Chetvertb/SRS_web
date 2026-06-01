@@ -1,10 +1,42 @@
 [
   {
     "index_card": 1,
-    "question": "лдорпап",
+    "question": "7",
     "answer": "ьт",
+    "interval": 2,
+    "ratio": 2.5,
+    "next_date": "2026-06-03"
+  },
+  {
+    "index_card": 2,
+    "question": "4",
+    "answer": "2",
+    "interval": 2,
+    "ratio": 2.5,
+    "next_date": "2026-06-03"
+  },
+  {
+    "index_card": 3,
+    "question": "5",
+    "answer": "2",
+    "interval": 2,
+    "ratio": 2.5,
+    "next_date": "2026-06-03"
+  },
+  {
+    "index_card": 4,
+    "question": "1",
+    "answer": "a",
+    "interval": 2,
+    "ratio": 2.5,
+    "next_date": "2026-06-03"
+  },
+  {
+    "index_card": 5,
+    "question": "3",
+    "answer": "sfdg",
     "interval": 1,
     "ratio": 2.5,
-    "next_date": "2026-05-13"
+    "next_date": "2026-05-02"
   }
 ]

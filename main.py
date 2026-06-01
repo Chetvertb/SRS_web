@@ -93,8 +93,8 @@ async def repeat_cards(id: int):
         return []
     
 
-@app.get('/{id}/all_cards', response_model=list[CardRepeat])
-async def repeat_cards(id: int):
+@app.get('/{id}/all_cards', response_model=list[CardBase])
+async def look_cards(id: int):
     file = f'{id}.json'
     if path.isfile(file):
         try:

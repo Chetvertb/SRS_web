@@ -9,7 +9,7 @@ class CardCreate(CardBase):
     pass 
 
 class CardRepeat(CardBase):
-    id: int
+    index_card: int
 
 class Card(CardRepeat):
     interval: int

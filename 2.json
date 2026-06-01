@@ -3,72 +3,72 @@
     "index_card": 1,
     "question": "string",
     "answer": "string",
-    "interval": 1,
-    "ratio": 2.5,
-    "next_date": "2026-05-10"
+    "interval": 2,
+    "ratio": 2.3,
+    "next_date": "2026-05-03"
   },
   {
     "index_card": 2,
     "question": "string",
     "answer": "string",
-    "interval": 1,
+    "interval": 2,
     "ratio": 2.5,
-    "next_date": "2026-05-10"
+    "next_date": "2026-05-03"
   },
   {
     "index_card": 3,
     "question": "ок",
     "answer": "ок",
-    "interval": 1,
+    "interval": 2,
     "ratio": 2.5,
-    "next_date": "2026-05-13"
+    "next_date": "2026-05-03"
   },
   {
     "index_card": 4,
     "question": "2",
     "answer": "3",
-    "interval": 1,
+    "interval": 2,
     "ratio": 2.5,
-    "next_date": "2026-05-13"
+    "next_date": "2026-05-03"
   },
   {
     "index_card": 5,
     "question": "2",
     "answer": "2",
-    "interval": 1,
+    "interval": 2,
     "ratio": 2.5,
-    "next_date": "2026-05-13"
+    "next_date": "2026-05-03"
   },
   {
     "index_card": 6,
     "question": "2",
     "answer": "3",
-    "interval": 1,
+    "interval": 2,
     "ratio": 2.5,
-    "next_date": "2026-05-13"
+    "next_date": "2026-05-03"
   },
   {
     "index_card": 7,
     "question": "2",
     "answer": "2",
-    "interval": 1,
+    "interval": 2,
     "ratio": 2.5,
-    "next_date": "2026-05-13"
+    "next_date": "2026-05-03"
   },
   {
     "index_card": 8,
     "question": "2",
     "answer": "1",
-    "interval": 1,
+    "interval": 2,
     "ratio": 2.5,
-    "next_date": "2026-05-13"
+    "next_date": "2026-05-03"
   },
   {
     "index_card": 9,
     "question": "ц",
     "answer": "й",
-    "interval": 1,
+    "interval": 2,
     "ratio": 2.5,
-    "next_date": "2026-05-13"
+    "next_date": "2026-05-03"
   }
 ]
