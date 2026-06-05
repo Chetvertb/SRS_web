@@ -3,49 +3,49 @@
     "index_card": 1,
     "question": "string",
     "answer": "string",
-    "interval": 2,
+    "interval": 4,
     "ratio": 2.3,
-    "next_date": "2026-05-03"
+    "next_date": "2026-06-09"
   },
   {
     "index_card": 2,
     "question": "string",
     "answer": "string",
-    "interval": 2,
+    "interval": 5,
     "ratio": 2.5,
-    "next_date": "2026-05-03"
+    "next_date": "2026-06-10"
   },
   {
     "index_card": 3,
     "question": "ок",
     "answer": "ок",
-    "interval": 2,
+    "interval": 5,
     "ratio": 2.5,
-    "next_date": "2026-05-03"
+    "next_date": "2026-06-10"
   },
   {
     "index_card": 4,
     "question": "2",
     "answer": "3",
-    "interval": 2,
+    "interval": 5,
     "ratio": 2.5,
-    "next_date": "2026-05-03"
+    "next_date": "2026-06-10"
   },
   {
     "index_card": 5,
     "question": "2",
     "answer": "2",
-    "interval": 2,
+    "interval": 5,
     "ratio": 2.5,
-    "next_date": "2026-05-03"
+    "next_date": "2026-06-10"
   },
   {
     "index_card": 6,
     "question": "2",
     "answer": "3",
-    "interval": 2,
+    "interval": 5,
     "ratio": 2.5,
-    "next_date": "2026-05-03"
+    "next_date": "2026-06-10"
   },
   {
     "index_card": 7,

@@ -3,40 +3,38 @@
   <head>
     <meta charset="utf-8">
     <title>Повторение карточек</title>
+    <link rel="stylesheet" href="/static/style.css">
   </head>
   <body>
-    <div class="container"
-      <h1>Повторение карточек</h1><p></p>
-      <button id="startRpt">Начать</button><p></p>
+    <div class="container">
+      <h1>Повторение карточек</h1>
+      <button id="startRpt">Начать</button>
 
       <div class="card-box">
         <h3 id="question-title">Вопрос:</h3>
-        <p id="questionRpt">Нажмите кнопку начать</p>
+        <span id="questionRpt">Нажмите кнопку начать</span>
         
         <h3 id="answer-title">Ответ:</h3>
-        <p id="answerRpt">Здесь появится ответ</p>
-    
+        <span id="answerRpt">Здесь появится ответ</span>
+      </div>
 
-        <input type="radio" name="mark" id="5">
-        <label for="5">5</label><br>
+      <div class="radio-block">
+        <label><input type="radio" name="mark" id="5">5</label>
 
-        <input type="radio" name="mark" id="4" checked>
-        <label for="4">4</label><br>
+        <label><input type="radio" name="mark" id="4" checked>4</label>
 
-        <input type="radio" name="mark" id="3">
-        <label for="3">3</label><br>
+        <label><input type="radio" name="mark" id="3">3</label>
 
-        <input type="radio" name="mark" id="2">
-        <label for="2">2</label><br>
-        
-        <br>
+        <label><input type="radio" name="mark" id="2">2</label>
+      </div>
+
+      <div class="button-repeat">
         <button id="showAnswerRpt">Показать ответ</button>
-        <button id="nextCardBtnRpt">Следующая</button><p></p>
-
-      </div>  
+        <button id="nextCardBtnRpt">Следующая</button>
+      </div>
       <a href="index.html">⬅️ Назад в меню</a>
       <!-- Комментарий -->
-    </div class="container">
+    </div>
   </body>
   <script src="/static/script.js"></script>
 </html>

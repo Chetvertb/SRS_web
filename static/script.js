@@ -55,6 +55,10 @@ document.addEventListener('DOMContentLoaded', () =>{
 //identification
     if (loginBtn&&inputId) {
         console.log("Мы на главной странице");
+        const savedId = sessionStorage.getItem('userId')
+            if (savedId) {
+                inputId.placeholder = `Ваш ID: ${savedId}`
+            };
         loginBtn.addEventListener('click', () =>{
             const idValue = inputId.value;
             if (idValue) {
