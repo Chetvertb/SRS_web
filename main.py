@@ -10,8 +10,9 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
 from sqlalchemy import select
+from passlib.context import CryptContext
 
-from schemas import CardBase, Card, CardCreate, CardScore, CardRepeat
+from schemas import CardBase, Card, CardCreate, CardScore, CardRepeat, UserLogin
 from database import engine, get_db
 import models
 from models import DBCard, DBUser
@@ -42,6 +43,16 @@ app.add_middleware(
     allow_headers=["*"], 
 )
 
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+def get_password_hash(password: str) -> str:
+    '''create hash password'''
+    return pwd_context.hash(password)
+
+def verify_password(password: str, hashed_password: str) -> bool:
+    '''check password'''
+    return pwd_context.verify(password, hashed_password)
+
 def size_ratio(mark, interval, ratio):
     '''Function сalculates the repetition interval based on the evaluation'''
     if mark == 2:
@@ -59,7 +70,20 @@ def size_ratio(mark, interval, ratio):
 @app.get('/')
 async def read_index():
     return FileResponse("static/index.html")
-    
+
+@app.post('/login')
+async def authentication(user_data: UserLogin, db: Session = Depends(get_db)):
+    query = select(DBUser).where(DBUser.username == user_data.username)
+    result = db.execute(query).scalar_one_or_none()
+    if result:
+        if verify_password(user_data.password, result.hashed_password):
+            return {"status": "success", "user_id": result.id, "username": result.username}
+    raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
+                        detail="Неверное имя пользователя или пароль")
+
+
+
+
 @app.patch('/{id}/cards/{card_id}')
 async def change_period(score: CardScore, card_id: int, id: int, db: Session = Depends(get_db)):
     query  = select(DBCard).where(DBCard.index_card == card_id)

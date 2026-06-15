@@ -23,3 +23,7 @@ class Card(CardRepeat):
     
 class CardScore(Base):
     Score: int = Field(..., ge=1, le=5)
+
+class UserLogin(Base):
+    username: str
+    password: str
