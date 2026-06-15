@@ -42,15 +42,6 @@ app.add_middleware(
     allow_headers=["*"], 
 )
 
-
-def read_file(id):
-    with open(f'{id}.json', 'r', encoding='utf-8') as f_cards:
-        return json.load(f_cards)
-    
-def write_file(data, id):
-    with open(f'{id}.json', 'w', encoding='utf-8') as f_cards:
-        json.dump(data, f_cards, ensure_ascii=False, indent=2)
-
 def size_ratio(mark, interval, ratio):
     '''Function сalculates the repetition interval based on the evaluation'''
     if mark == 2:
