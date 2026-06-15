@@ -66,7 +66,7 @@ async def change_period(score: CardScore, card_id: int, id: int, db: Session = D
     card = db.execute(query).scalar_one_or_none()
     if card:
         interval, ratio = size_ratio(score.Score, card.interval, card.ratio)
-        card.next_date = str(date.today() + td(days=interval))
+        card.next_date = date.today() + td(days=interval)
         card.interval = interval
         card.ratio = ratio
         db.commit()
