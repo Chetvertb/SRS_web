@@ -1,5 +1,6 @@
 import uvicorn
-from fastapi import FastAPI, HTTPException
+
+from fastapi import FastAPI, HTTPException, Depends, status
 from pydantic import BaseModel
 from datetime import date, timedelta as td
 from os import path
@@ -7,8 +8,14 @@ import json
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
+from sqlalchemy.orm import Session
+from sqlalchemy import select
 
 from schemas import CardBase, Card, CardCreate, CardScore, CardRepeat
+from database import engine, get_db
+import models
+from models import DBCard, DBUser
+models.Base.metadata.create_all(bind=engine)
 
 
 
@@ -63,74 +70,49 @@ async def read_index():
     return FileResponse("static/index.html")
     
 @app.patch('/{id}/cards/{card_id}')
-async def change_period(score: CardScore, card_id: int, id: int):
-    cards = read_file(id)
-    for ind, val in enumerate(cards):
-        if val['index_card'] == card_id:
-            interval, ratio = size_ratio(score.Score, val['interval'], val['ratio'])
-            val['interval'] = interval
-            val['ratio'] = ratio
-            val['next_date'] = str(date.today() + td(days=interval))
-            cards[ind] = val
-            write_file(cards, id)
-            return {"message": "Card changed"}
-    raise HTTPException(status_code=404, detail="Card not found")
+async def change_period(score: CardScore, card_id: int, id: int, db: Session = Depends(get_db)):
+    query  = select(DBCard).where(DBCard.index_card == card_id)
+    card = db.execute(query).scalar_one_or_none()
+    if card:
+        interval, ratio = size_ratio(score.Score, card.interval, card.ratio)
+        card.next_date = str(date.today() + td(days=interval))
+        card.interval = interval
+        card.ratio = ratio
+        db.commit()
+        return {"message": "Card changed"}
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+
                                    
 
 
 @app.get('/{id}/cards', response_model=list[CardRepeat])
-async def repeat_cards(id: int):
-    file = f'{id}.json'
-    if path.isfile(file):
-        try:
-            cards = read_file(id)
-            today = date.today()
-            cards = [i for i in cards if date.fromisoformat(i['next_date']) <= today]
-            return cards
-        except json.JSONDecodeError:
-            return []
-    else:
-        return []
+async def repeat_cards(id: int, db: Session = Depends(get_db)):
+    today = date.today()
+    query = select(DBCard).where(DBCard.next_date <= today, 
+                                 DBCard.user_id == id)
+    cards = db.execute(query).scalars().all()
+    return cards
     
 
 @app.get('/{id}/all_cards', response_model=list[CardBase])
-async def look_cards(id: int):
-    file = f'{id}.json'
-    if path.isfile(file):
-        try:
-            cards = read_file(id)
-            return cards
-        except json.JSONDecodeError:
-            return []
-    else:
-        return []
+async def look_cards(id: int, db: Session = Depends(get_db)):
+    query = select(DBCard).where(DBCard.user_id == id)
+    result = db.execute(query)
+    cards = result.scalars().all()
+    return cards
 
 @app.post('/{id}/cards')
-async def create_card(card: CardBase, id: int):
-    if path.isfile(f"{id}.json"):
-        try:
-            cards = read_file(id)
-        except:
-            cards = []
-    else:
-        cards = []
-    question, answer = card.question, card.answer
-    next_date = (date.today() + td(days=1)).strftime("%Y-%m-%d")
-    if len(cards):
-        card_id = max(cards, key=lambda x: x['index_card'])['index_card'] + 1
-    else:
-        card_id = 1
-    card = {
-        "index_card": card_id,
-        "question": question,
-        "answer": answer,
-        "interval": 1,
-        "ratio": 2.5,
-        "next_date": next_date
-        }
-    
-    cards.append(card)
-    write_file(cards, id)
+async def create_card(card: CardBase, id: int, db: Session = Depends(get_db)):
+    next_date_obj = date.today() + td(days=1)
+    card = models.DBCard(
+        user_id = id,
+        question = card.question,
+        answer = card.answer,
+        next_date = next_date_obj
+    )
+    db.add(card)
+    db.commit()
+    db.refresh(card)
     return {"status": "success", "card": card}
     
 
