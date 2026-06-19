@@ -6,20 +6,68 @@
     <link rel="stylesheet" href="/static/style.css">
   </head>
   <body>
-    <div class="container"> 
-        <h1>Сисема интервальных повторений</h1>
-        <div class="auth-section">
-          <input type="number" id="user-id-input" placeholder="Введите ваш ID">
-          <button id="login-button">Установить ID</button>
-        </div>
+    <header>
+      <div class="logo">🧠 SRS Cards</div>
+      <div class="nav-buttons" id="guest-nav">
+          <button class="btn-outline" id="nav-login-btn">Войти</button>
+          <button class="btn-solid" id="nav-register-btn">Регистрация</button>
+      </div>
+      <div class="nav-buttons hidden" id="user-nav">
+          <button class="btn-outline" id="logout-button" style="border-color: #e74c3c; color: #e74c3c;">Выйти</button>
+      </div>
+  </header>
 
-        <div class="menu">
-          <h2>Меню пользователя</h2>
-            <button onclick="navigateTo('/static/repeat_cards.html')">🔁 Повторение карточек</button>
-            <button onclick="navigateTo('/static/add_cards.html')">➕ Добавление карточек</button>
-            <button onclick="navigateTo('/static/look_cards.html')">📜 Просмотр всех карточек</button>
-        </div>
-    </div>
+  <div id="promo-page" class="promo-section">
+      <h1>Система интервальных повторений</h1>
+      <p>Забываете изученное через пару дней? Наше приложение использует научно доказанный метод интервальных повторений (Spaced Repetition System). Умный алгоритм сам вычислит идеальный момент, когда вам нужно повторить карточку, чтобы зафиксировать её в памяти навсегда.</p>
+      
+
+      <div class="features">
+          <div class="feature-card">
+              <h3>🧠 Научный подход</h3>
+              <p>Повторения базируются на кривой забывания Эббингауза.</p>
+          </div>
+          <div class="feature-card">
+              <h3>⚡ Быстрый старт</h3>
+              <p>Создавайте свои карточки с вопросами и ответами за пару кликов.</p>
+          </div>
+          <div class="feature-card">
+              <h3>📊 Умные оценки</h3>
+              <p>Система сама меняет интервалы в зависимости от вашей оценки.</p>
+          </div>
+      </div>
+  </div>
+
+  <div id="main-app-page" class="app-container hidden">
+      <div class="container"> 
+          <h2 id="welcome-text">Меню пользователя</h2>
+          <div class="menu">
+              <button onclick="navigateTo('/static/repeat_cards.html')">🔁 Повторение карточек</button>
+              <button onclick="navigateTo('/static/add_cards.html')">➕ Добавление карточек</button>
+              <button onclick="navigateTo('/static/look_cards.html')">📜 Просмотр всех карточек</button>
+          </div>
+      </div>
+  </div>
+
+  <div class="modal-overlay hidden" id="authModal">
+      <div class="modal-content">
+          <span class="close-btn" id="closeModalBtn">&times;</span>
+          
+          <div class="auth-tabs">
+              <button id="tab-login" class="active">Войти</button>
+              <button id="tab-register">Регистрация</button>
+          </div>
+          
+          <form id="auth-form" style="margin-top: 20px;">
+              <input type="text" id="username-input" placeholder="Имя пользователя" required>
+              <input type="email" id="email-input" placeholder="Email" class="hidden">
+              <input type="password" id="password-input" placeholder="Пароль" required>
+              
+              <button type="submit" id="submit-auth-btn">Войти</button>
+          </form>
+          <p id="auth-error" style="color: red; text-align: center; font-size: 14px; margin-top: 10px;"></p>
+      </div>
+  </div>
     
     <script src="/static/script.js"></script>
   </body>

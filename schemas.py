@@ -27,3 +27,6 @@ class CardScore(Base):
 class UserLogin(Base):
     username: str
     password: str
+
+class UserRegistration(UserLogin):
+    usermail: str

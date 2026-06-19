@@ -1,7 +1,6 @@
 import uvicorn
 
 from fastapi import FastAPI, HTTPException, Depends, status
-from pydantic import BaseModel
 from datetime import date, timedelta as td
 from os import path
 import json
@@ -9,10 +8,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
-from sqlalchemy import select
+from sqlalchemy import select, or_
 from passlib.context import CryptContext
 
-from schemas import CardBase, Card, CardCreate, CardScore, CardRepeat, UserLogin
+from schemas import CardBase, Card, CardCreate, CardScore, CardRepeat, UserLogin, UserRegistration
 from database import engine, get_db
 import models
 from models import DBCard, DBUser
@@ -71,13 +70,34 @@ def size_ratio(mark, interval, ratio):
 async def read_index():
     return FileResponse("static/index.html")
 
+@app.post('/registration')
+async def create_user(user_data: UserRegistration, db: Session = Depends(get_db)):
+    query = select(DBUser).where(or_(DBUser.username == user_data.username, 
+                                     DBUser.usermail == user_data.usermail)
+                                     )
+    result = db.execute(query).scalar_one_or_none()
+    if result:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Пользователь с таким именем или почтой уже существует."
+        )
+    new_user = DBUser(username = user_data.username, 
+                      usermail = user_data.usermail, 
+                      hashed_password = get_password_hash(user_data.password))
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+    return {"status": "success", "user_id": new_user.id, "username": new_user.username}
+    
+
 @app.post('/login')
 async def authentication(user_data: UserLogin, db: Session = Depends(get_db)):
     query = select(DBUser).where(DBUser.username == user_data.username)
     result = db.execute(query).scalar_one_or_none()
     if result:
-        if verify_password(user_data.password, result.hashed_password):
-            return {"status": "success", "user_id": result.id, "username": result.username}
+        if user_data.password:
+            if verify_password(user_data.password, result.hashed_password):
+                return {"status": "success", "user_id": result.id, "username": result.username}
     raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                         detail="Неверное имя пользователя или пароль")
 

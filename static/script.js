@@ -12,7 +12,7 @@ const startLk = document.getElementById('startLk')
 
 // ID aviable check function
 function checkId() {
-    return sessionStorage.getItem('userId');
+    return localStorage.getItem('userId');
 }
 
 // page jump function
@@ -42,8 +42,139 @@ function displayCurrantCard(cards, index) {
 
 
 document.addEventListener('DOMContentLoaded', () =>{
-    const loginBtn = document.getElementById('login-button');
-    const inputId = document.getElementById('user-id-input');
+    const promoPage = document.getElementById('promo-page');
+    const mainAppPage = document.getElementById('main-app-page');
+    const guestNav = document.getElementById('guest-nav');
+    const userNav = document.getElementById('user-nav');
+    const welcomeText = document.getElementById('welcome-texr');
+    const LogoutButton = document.getElementById('logout-button');
+
+    const modal = document.getElementById('authModal');
+    const authForm = document.getElementById('auth-form');
+    const usernameInput = document.getElementById('username-input');
+    const emailInput = document.getElementById('email-input');
+    const passwordInput = document.getElementById('password-input');
+    const submitBtn = document.getElementById('submit-auth-btn');
+    const authError = document.getElementById('auth-error');
+
+    const tabLogin = document.getElementById('tab-login');
+    const tabRegister = document.getElementById('tab-register');
+
+    const navLoginBtn = document.getElementById('nav-login-btn');
+    const navRegisterBtn = document.getElementById('nav-register-btn');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+
+    let authMode = 'login';
+
+    function checkAuth() {
+        const savedUserId = localStorage.getItem('userId');
+        const savedUsername = localStorage.getItem('username');
+
+        if (savedUserId && mainAppPage && promoPage) {
+            if (modal) modal.classList.add('hidden');
+            promoPage.classList.add('hidden');
+            mainAppPage.classList.remove('hidden');
+            if (guestNav) guestNav.classList.add('hidden');
+            if (userNav) userNav.classList.remove('hidden');
+            if (welcomeText) welcomeText.innerText = `Добро пожаловать, ${savedUsername}!`;
+        } else if (promoPage && mainAppPage) {
+            promoPage.classList.remove('hidden');
+            mainAppPage.classList.add('hidden');
+            if (guestNav) guestNav.classList.remove('hidden');
+            if (userNav) userNav.classList.add('hidden');
+        }
+    }
+
+    function openModal(mode = 'login') {
+        if (!modal) return;
+        modal.classList.remove('hidden');
+        if (modal == 'register' && tabRegister) {
+            tabRegister.click();
+        } else if (tabLogin) {
+            tabLogin.click();
+        }
+    }
+
+    if (navLoginBtn) navLoginBtn.addEventListener('click', () => openModal('login'));
+    if (navRegisterBtn) navRegisterBtn.addEventListener('click', () => openModal('register'));
+    if (closeModalBtn) closeModalBtn.addEventListener('click', () => modal.classList.add('hidden'));
+    
+    if (modal) {
+        modal.addEventListener('click', (e) => {
+            if (e.target == modal) modal.classList.add('hidden');
+        });
+    }
+
+    if (tabRegister && tabLogin && emailInput && submitBtn) {
+        tabRegister.addEventListener('click', () => {
+            authMode = 'register';
+            emailInput.classList.remove('hidden');
+            emailInput.required = true;
+            submitBtn.innerText = 'Зарегистрироваться';
+            tabRegister.classList.add('active');
+            tabLogin.classList.remove('active');
+            authError.innerText = '';
+        });
+
+        tabLogin.addEventListener('click', () => {
+            authMode = 'login';
+            emailInput.classList.add('hidden');
+            emailInput.required = false;
+            submitBtn.innerText = 'Войти';
+            tabRegister.classList.add('active');
+            tabLogin.classList.remove('active');
+            authError.innerText = '';
+
+        });
+    }
+    if (authForm) {
+        authForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            authError.innerText = '';
+
+            let url = '/login';
+            let bodyData = { username: usernameInput.value, password: passwordInput.value};
+
+            if (authMode == 'register') {
+                url = '/registration';
+                bodyData.usermail = emailInput.value;
+            }
+
+            try {
+                const response = await fetch(url, {
+                    method: "POST",
+                    headers: {"Content-Type": 'application/json'},
+                    body: JSON.stringify(bodyData)
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.detail || 'Ошибка авторизации');
+                }
+
+                if (authMode == 'login') {
+                    const result = await response.json()
+                    localStorage.setItem('userId', result.user_id);
+                    localStorage.setItem('username', result.username);
+                    checkAuth();
+                } else {
+                    alert('Регистрация прошла успешно! Теперь войдите в аккаунт.')
+                    tabLogin.click();
+                }
+            } catch (error) {
+                authError.innerText = error.message;
+            }
+        });
+    }
+    
+    if (LogoutButton) {
+        LogoutButton.addEventListener('click', () => {
+            localStorage.clear();
+            checkAuth();
+        });
+    }
+
+    checkAuth();
     const saveBtnAdd = document.getElementById('saveBtnAdd');
 
     const nextCardBtnRpt = document.getElementById('nextCardBtnRpt');
@@ -52,22 +183,6 @@ document.addEventListener('DOMContentLoaded', () =>{
     const nextCardBtnLk = document.getElementById('nextCardBtnLk');
     const showAnswerLk = document.getElementById('showAnswerLk');
 
-//identification
-    if (loginBtn&&inputId) {
-        console.log("Мы на главной странице");
-        const savedId = sessionStorage.getItem('userId')
-            if (savedId) {
-                inputId.placeholder = `Ваш ID: ${savedId}`
-            };
-        loginBtn.addEventListener('click', () =>{
-            const idValue = inputId.value;
-            if (idValue) {
-                sessionStorage.setItem('userId', idValue);
-                alert("ID saved: " + idValue);
-                window.location.reload()
-            }
-        });
-    }
     
 // Creating a new card
     if (saveBtnAdd) {
@@ -76,7 +191,7 @@ document.addEventListener('DOMContentLoaded', () =>{
             const answer = document.getElementById("answer");
             const question = document.getElementById("question");
             if (answer&&question)  {
-                const ID = sessionStorage.getItem('userId')      
+                const ID = localStorage.getItem('userId')      
                 if (ID) {
                     try {
                         const response = await fetch(`/${ID}/cards`, {
@@ -113,7 +228,7 @@ document.addEventListener('DOMContentLoaded', () =>{
         console.log("Мы на странице Повторить карточки")
         currentCardIndex = 0
         startRpt.addEventListener('click', async () => {
-            const ID = sessionStorage.getItem('userId')
+            const ID = localStorage.getItem('userId')
             if (ID) {
                 try {
                 const response = await fetch(`/${ID}/cards`, {
@@ -143,7 +258,7 @@ document.addEventListener('DOMContentLoaded', () =>{
             return;
         }
         const mark = document.querySelector('input[name="mark"]:checked').id
-        const ID = sessionStorage.getItem('userId')
+        const ID = localStorage.getItem('userId')
         try {
             const responseMark = await fetch(`/${ID}/cards/${sessionCards[currentCardIndex].index_card}`, {
                 method: 'PATCH',
@@ -175,7 +290,7 @@ document.addEventListener('DOMContentLoaded', () =>{
         console.log("Мы на странице Посмотреть все карточки")
         currentCardIndex = 0;
         startLk.addEventListener('click', async () => {
-            const ID = sessionStorage.getItem('userId')
+            const ID = localStorage.getItem('userId')
             if (ID) {
                 try {
                 const response = await fetch(`/${ID}/all_cards`, {
@@ -206,7 +321,7 @@ document.addEventListener('DOMContentLoaded', () =>{
                 alert("Это была последняя карточка для повторения!");
                 return;
             }
-            const ID = sessionStorage.getItem('userId')
+            const ID = localStorage.getItem('userId')
             if (ID) {
                     ++currentCardIndex;
                     displayCurrantCard(sessionCards, currentCardIndex);
@@ -227,7 +342,7 @@ document.addEventListener('DOMContentLoaded', () =>{
 
         if (cardsBody) {
             console.log("We in the looks cards page");
-            const userId = sessionStorage.getItem('userId');
+            const userId = localStorage.getItem('userId');
 
             if (userId) {   
                 console.log("Load data for user: ", userId);
