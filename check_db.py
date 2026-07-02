@@ -3,7 +3,7 @@ import sqlite3
 conn = sqlite3.connect("cards.db")
 cursor = conn.cursor()
 
-cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
+cursor.execute("SELECT * FROM users")
 
 tables = cursor.fetchall()
 
